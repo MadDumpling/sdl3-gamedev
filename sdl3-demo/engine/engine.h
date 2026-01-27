@@ -75,6 +75,8 @@ public:
 			services.compSys().registerSystem(std::make_unique<CollisionSystem>(services));
 			services.compSys().registerSystem(std::make_unique<SpriteAnimationSystem>(services));
 			services.compSys().registerSystem(std::make_unique<SpriteRenderSystem>(services));
+			services.compSys().registerSystem(std::make_unique<SpriteRenderSystem>(services));
+			services.compSys().registerSystem(std::make_unique<SpriteRenderSystem>(services));
 
 			return app.initialize(services, state);
 		}
@@ -137,7 +139,7 @@ private:
 		World &world = services.world();
 		Node &root = world.getNode(app.getRoot());
 
-		SDL_Event event{ 0 };
+		SDL_Event event{};
 		while (SDL_PollEvent(&event))
 		{
 			switch (event.type)

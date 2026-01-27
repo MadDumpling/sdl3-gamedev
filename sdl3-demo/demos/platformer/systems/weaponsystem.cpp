@@ -109,7 +109,7 @@ void WeaponSystem::onEvent(NodeHandle target, const ShootEndEvent &event)
 
 void WeaponSystem::onEvent(NodeHandle target, const DirectionChangedEvent &event)
 {
-	// we only care if we're turning
+	// we only care if we're turning (-1, 1)
 	if (event.getDirection().x != 0)
 	{
 		fireDirection = event.getDirection();

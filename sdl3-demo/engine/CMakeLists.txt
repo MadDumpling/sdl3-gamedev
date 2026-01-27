@@ -5,7 +5,7 @@ find_package(tinyxml2 REQUIRED)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_library(engine STATIC
+set(ENGINE_SOURCES
 	"tmx.cpp"
 	"timer.h"
 	"animation.h"
@@ -73,9 +73,14 @@ add_library(engine STATIC
 	"componentsystems.cpp"
 	"components/componententry.h"
 	"config.h"
-	
 	"systems/timersystem.h"
-	"systems/timersystem.cpp"  "messaging/eventqueue.cpp")
+	"systems/timersystem.cpp"
+	"messaging/eventqueue.cpp"
+)
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ENGINE_SOURCES})
+
+add_library(engine STATIC ${ENGINE_SOURCES})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET engine PROPERTY CXX_STANDARD 23)
