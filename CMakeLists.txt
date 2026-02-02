@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.24)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -7,6 +7,7 @@ if (POLICY CMP0141)
 endif()
 
 project ("sdl3-demo" LANGUAGES C CXX)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory("sdl3-demo/engine")
 add_subdirectory ("sdl3-demo/demos/platformer")
