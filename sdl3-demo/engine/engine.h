@@ -190,33 +190,11 @@ private:
 		// fixed step systems
 		ctx.deltaTime = fixedStep;
 		accumulator += deltaTime;
-		const float accumulatorBackup = accumulator;
-
-		FrameContext::global().setStage(FrameStage::Physics);
-		services.eventQueue().dispatch();
-		while (accumulator >= fixedStep)
-		{
-			processSystems(root, world);
-			accumulator -= fixedStep;
-		}
-
-		FrameContext::global().setStage(FrameStage::Gameplay);
-		services.eventQueue().dispatch();
-		accumulator = accumulatorBackup;
-		while (accumulator >= fixedStep)
-		{
-			processSystems(root, world);
-			accumulator -= fixedStep;
-		}
-
-		FrameContext::global().setStage(FrameStage::Animation);
-		services.eventQueue().dispatch();
-		accumulator = accumulatorBackup;
-		while (accumulator >= fixedStep)
-		{
-			processSystems(root, world);
-			accumulator -= fixedStep;
-		}
+		const float accumulatedTime = accumulator;
+		
+		executeStage(root, FrameStage::Physics, accumulatedTime);
+		executeStage(root, FrameStage::Gameplay, accumulatedTime);
+		executeStage(root, FrameStage::Animation, accumulatedTime);
 
 		// drawing happens every single frame
 		ctx.deltaTime = deltaTime;
@@ -241,6 +219,20 @@ private:
 		processSystems(root, world);
 
 		services.compSys().removeScheduled();
+	}
+
+	void executeStage(Node &root, FrameStage stage, float accumulatedTime)
+	{
+		FrameContext::global().setStage(stage);
+		services.eventQueue().dispatch();
+
+		// iterate fixed-step systems for accumulated time
+		accumulator = accumulatedTime;
+		while (accumulator >= fixedStep)
+		{
+			processSystems(root, world);
+			accumulator -= fixedStep;
+		}
 	}
 
 	void processSystems(Node &obj, World &world)
