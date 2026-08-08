@@ -1,5 +1,7 @@
 #include "weaponsystem.h"
 
+#include <glm/glm.hpp>
+
 #include "../components/weaponcomponent.h"
 #include "../components/projectilecomponent.h"
 
@@ -20,6 +22,7 @@ WeaponSystem::WeaponSystem(Services &services) : System(services)
 	services.eventQueue().dispatcher.registerHandler<ShootBeginEvent>(this);
 	services.eventQueue().dispatcher.registerHandler<ShootEndEvent>(this);
 	services.eventQueue().dispatcher.registerHandler<DirectionChangedEvent>(this);
+	services.eventQueue().dispatcher.registerHandler<AimChangedEvent>(this);
 	//services.eventQueue().dispatcher.registerHandler<TimerTimeoutEvent>(this);
 }
 
@@ -42,10 +45,9 @@ void WeaponSystem::update(Node &node)
 		auto &res = Resources::get();
 
 		auto &physCmp = services.compSys().addComponent<PhysicsComponent>(bullet);
-		const int yVariation = 40;
-		const float yVelocity = SDL_rand(yVariation) - yVariation / 2.0f;
-		physCmp.setVelocity(glm::vec2(pc->getVelocity().x + 600.0f * fireDirection.x, yVelocity));
-		physCmp.setMaxSpeed(glm::vec2(1000.0f, 100.0f));
+		const glm::vec2 bulletVelocity = pc->getVelocity() + fireDirection * 600.0f;
+		physCmp.setVelocity(bulletVelocity);
+		physCmp.setMaxSpeed(glm::vec2(1200.0f, 1200.0f));
 		//physCmp.setDynamic(true);
 		physCmp.setGravityFactor(0);
 		physCmp.setDamping(0);
@@ -66,16 +68,8 @@ void WeaponSystem::update(Node &node)
 		services.compSys().addComponent<ProjectileComponent>(bullet);
 
 		// adjust bullet start position
-		SDL_FRect collider = collCmp.getCollider();
-		const float left = -6;
-		const float right = 33;
-		const float t = (fireDirection.x + 1) / 2.0f; // results in a value of 0..1
-		const float xOffset = left + (right - left) * t; // LERP between left and right based on direction
-
-		bullet.setPosition(glm::vec2(
-			node.getPosition().x + xOffset,
-			node.getPosition().y + 32 / 2
-		));
+		glm::vec2 offset = fireDirection * 18.0f;
+		bullet.setPosition(node.getPosition() + offset);
 
 		node.addChild(bullet);
 	}
@@ -113,5 +107,13 @@ void WeaponSystem::onEvent(NodeHandle target, const DirectionChangedEvent &event
 	if (event.getDirection().x != 0)
 	{
 		fireDirection = event.getDirection();
+	}
+}
+
+void WeaponSystem::onEvent(NodeHandle target, const AimChangedEvent &event)
+{
+	if (glm::length(event.getDirection()) > 0.001f)
+	{
+		fireDirection = glm::normalize(event.getDirection());
 	}
 }

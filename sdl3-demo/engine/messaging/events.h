@@ -39,6 +39,33 @@ public:
 	glm::vec2 getDirection() const { return direction; }
 };
 
+class AimChangedEvent : public Event<AimChangedEvent, FrameStage::Input>
+{
+	glm::vec2 direction;
+public:
+	AimChangedEvent(glm::vec2 direction) : direction(direction) {}
+
+	glm::vec2 getDirection() const { return direction; }
+};
+
+class DashEvent : public Event<DashEvent, FrameStage::Gameplay>
+{
+public:
+	DashEvent() {}
+};
+
+class ParryEvent : public Event<ParryEvent, FrameStage::Gameplay>
+{
+public:
+	ParryEvent() {}
+};
+
+class InteractEvent : public Event<InteractEvent, FrameStage::Gameplay>
+{
+public:
+	InteractEvent() {}
+};
+
 class CollisionEvent : public Event<CollisionEvent, FrameStage::Physics>
 {
 	NodeHandle other;

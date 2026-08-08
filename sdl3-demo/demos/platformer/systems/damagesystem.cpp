@@ -1,4 +1,5 @@
 #include "damagesystem.h"
+#include "../components/playercontrollercomponent.h"
 #include "../events.h"
 
 DamageSystem::DamageSystem(Services &services) : System(services)
@@ -32,6 +33,16 @@ void DamageSystem::onEvent(NodeHandle target, const DamageEvent &event)
 	if (node.isLinkedWith(this))
 	{
 		auto [hc, pc, sc] = getRequiredComponents(node);
+		auto *playerCtrl = node.getComponent<PlayerControllerComponent>();
+		if (playerCtrl && (playerCtrl->isParrying() || playerCtrl->isDashing()))
+		{
+			if (playerCtrl->isParrying() && event.getSource().isValid())
+			{
+				services.eventQueue().enqueue<DamageEvent>(event.getSource(), 0, target, event.getAmount());
+			}
+			return;
+		}
+
 		pc->addImpulse(glm::vec2(200, 0));
 
 		hc->hp -= event.getAmount();

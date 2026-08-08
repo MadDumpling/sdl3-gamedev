@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "name": "Windows",
+      "compilerPath": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe",
+      "intelliSenseMode": "windows-msvc-x64",
+      "cppStandard": "c++23",
+      "includePath": [
+        "${workspaceFolder}/sdl3-demo/engine",
+        "${workspaceFolder}/sdl3-demo/engine/ext",
+        "${workspaceFolder}/sdl3-demo/demos/platformer",
+        "${workspaceFolder}/out/build/x64-debug/vcpkg_installed/x64-windows/include",
+        "${workspaceFolder}/out/build/x64-debug/vcpkg_installed/x64-windows/include/SDL3",
+        "${workspaceFolder}/out/build/x64-debug/vcpkg_installed/x64-windows/include/SDL3_mixer",
+        "${workspaceFolder}/out/build/x64-release/vcpkg_installed/x64-windows/include",
+        "${workspaceFolder}/out/build/x64-release/vcpkg_installed/x64-windows/include/SDL3",
+        "${workspaceFolder}/out/build/x64-release/vcpkg_installed/x64-windows/include/SDL3_mixer",
+        "${workspaceFolder}/vcpkg/installed/x64-windows/include"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/sdl3-demo/engine",
+          "${workspaceFolder}/sdl3-demo/demos/platformer",
+          "${workspaceFolder}/out/build/x64-debug/vcpkg_installed/x64-windows/include",
+          "${workspaceFolder}/vcpkg/installed/x64-windows/include"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    }
+  ],
+  "version": 4
+}

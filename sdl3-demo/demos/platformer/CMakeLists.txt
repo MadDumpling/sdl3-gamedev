@@ -14,6 +14,10 @@ set(PLATFORMER_SOURCES
 	"components/healthcomponent.h"
 	"components/healthcomponent.cpp"
 	"components/enemycomponent.cpp"
+	"components/hungercomponent.h"
+	"components/hungercomponent.cpp"
+	"components/survivorcomponent.h"
+	"components/survivorcomponent.cpp"
 	"systems/playercontrolsystem.cpp"
 	"systems/weaponsystem.h"
 	"systems/weaponsystem.cpp"
@@ -23,6 +27,12 @@ set(PLATFORMER_SOURCES
 	"systems/damagesystem.cpp"
 	"systems/enemysystem.h"
 	"systems/enemysystem.cpp"
+	"systems/hungersystem.h"
+	"systems/hungersystem.cpp"
+	"systems/survivorsystem.h"
+	"systems/survivorsystem.cpp"
+	"systems/hudsystem.h"
+	"systems/hudsystem.cpp"
 )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PLATFORMER_SOURCES})

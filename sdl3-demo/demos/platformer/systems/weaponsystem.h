@@ -10,6 +10,7 @@ class ShootEndEvent;
 class CollisionEvent;
 class NodeRemovalEvent;
 class DirectionChangedEvent;
+class AimChangedEvent;
 //class TimerTimeoutEvent;
 
 class WeaponSystem : public System<FrameStage::Gameplay, WeaponComponent, PhysicsComponent>
@@ -22,5 +23,6 @@ public:
 	void onEvent(NodeHandle target, const ShootBeginEvent &event);
 	void onEvent(NodeHandle target, const ShootEndEvent &event);
 	void onEvent(NodeHandle target, const DirectionChangedEvent &event);
+	void onEvent(NodeHandle target, const AimChangedEvent &event);
 	//void onEvent(NodeHandle target, const TimerTimeoutEvent &event);
 };

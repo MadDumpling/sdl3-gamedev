@@ -1,5 +1,6 @@
 #include "playercontrolsystem.h"
 
+#include <glm/glm.hpp>
 #include <messaging/eventqueue.h>
 #include <messaging/events.h>
 
@@ -11,11 +12,27 @@ PlayerControlSystem::PlayerControlSystem(Services &services) : System(services)
 	services.eventQueue().dispatcher.registerHandler<JumpEvent>(this);
 	services.eventQueue().dispatcher.registerHandler<ShootBeginEvent>(this);
 	services.eventQueue().dispatcher.registerHandler<ShootEndEvent>(this);
+	services.eventQueue().dispatcher.registerHandler<DashEvent>(this);
+	services.eventQueue().dispatcher.registerHandler<ParryEvent>(this);
 }
 
 void PlayerControlSystem::update(Node &node)
 {
 	auto [ic, pcc, pc] = getRequiredComponents(node);
+
+	float dt = FrameContext::dt();
+	if (pcc->isParrying() && pcc->getParryTimer().step(dt))
+	{
+		pcc->setParrying(false);
+	}
+	if (pcc->isDashing() && pcc->getDashTimer().step(dt))
+	{
+		pcc->setDashing(false);
+	}
+	if (!pcc->canDash() && pcc->getDashCooldownTimer().step(dt))
+	{
+		pcc->setDashReady(true);
+	}
 
 	switch (pcc->getCurrentState())
 	{
@@ -237,5 +254,31 @@ void PlayerControlSystem::onEvent(NodeHandle target, const ShootEndEvent &event)
 				transitionState(node, PState::slidingShooting);
 			}
 		}
+	}
+}
+
+void PlayerControlSystem::onEvent(NodeHandle target, const DashEvent &event)
+{
+	Node &node = services.world().getNode(target);
+	if (node.isLinkedWith(this))
+	{
+		auto [ic, pcc, pc] = getRequiredComponents(node);
+		glm::vec2 dashDirection{pc->getDirection().x, 0.0f};
+		if (glm::length(dashDirection) < 0.1f)
+		{
+			dashDirection = glm::vec2(pcc->getCurrentState() == PState::running || pcc->getCurrentState() == PState::runningShooting ? 1.0f : -1.0f, 0.0f);
+		}
+		pcc->startDash(dashDirection);
+		pc->addImpulse(dashDirection * 620.0f);
+	}
+}
+
+void PlayerControlSystem::onEvent(NodeHandle target, const ParryEvent &event)
+{
+	Node &node = services.world().getNode(target);
+	if (node.isLinkedWith(this))
+	{
+		auto [ic, pcc, pc] = getRequiredComponents(node);
+		pcc->startParry();
 	}
 }
