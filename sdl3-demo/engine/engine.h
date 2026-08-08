@@ -3,6 +3,7 @@
 #include <format>
 #include <memory>
 #include <array>
+#include <glm/glm.hpp>
 #include <sdlstate.h>
 #include <inputstate.h>
 #include <framecontext.h>
@@ -18,6 +19,7 @@
 #include <systems/physicssystem.h>
 #include <systems/collisionsystem.h>
 #include <systems/timersystem.h>
+#include <systems/context/rendercontext.h>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -178,6 +180,38 @@ private:
 					}
 					break;
 				}
+				case SDL_EVENT_MOUSE_BUTTON_DOWN:
+				{
+					if (event.button.button == SDL_BUTTON_LEFT)
+					{
+						services.eventQueue().enqueue<ShootBeginEvent>(services.inputState().getFocusTarget(), 0);
+					}
+					break;
+				}
+				case SDL_EVENT_MOUSE_BUTTON_UP:
+				{
+					if (event.button.button == SDL_BUTTON_LEFT)
+					{
+						services.eventQueue().enqueue<ShootEndEvent>(services.inputState().getFocusTarget(), 0);
+					}
+					break;
+				}
+			}
+		}
+
+		float mouseX = 0.0f, mouseY = 0.0f;
+		SDL_GetMouseState(&mouseX, &mouseY);
+		auto focusTarget = services.inputState().getFocusTarget();
+		if (focusTarget.isValid())
+		{
+			Node &focusNode = world.getNode(focusTarget);
+			glm::vec2 worldMouse{ static_cast<float>(mouseX), static_cast<float>(mouseY) };
+			worldMouse += RenderContext::shared().getCameraPosition();
+			glm::vec2 aimDir = worldMouse - focusNode.getPosition();
+			if (glm::length(aimDir) > 0.001f)
+			{
+				aimDir = glm::normalize(aimDir);
+				services.eventQueue().enqueue<AimChangedEvent>(focusTarget, 0, aimDir);
 			}
 		}
 

@@ -62,6 +62,22 @@ void InputSystem::onEvent(NodeHandle target, const KeyDownEvent &event)
 			services.eventQueue().enqueue<ShootBeginEvent>(node.getHandle(), 0);
 			break;
 		}
+		case SDL_SCANCODE_SPACE:
+		{
+			services.eventQueue().enqueue<DashEvent>(node.getHandle(), 0);
+			break;
+		}
+		case SDL_SCANCODE_LSHIFT:
+		case SDL_SCANCODE_RSHIFT:
+		{
+			services.eventQueue().enqueue<ParryEvent>(node.getHandle(), 0);
+			break;
+		}
+		case SDL_SCANCODE_E:
+		{
+			services.eventQueue().enqueue<InteractEvent>(node.getHandle(), 0);
+			break;
+		}
 	}
 }
 

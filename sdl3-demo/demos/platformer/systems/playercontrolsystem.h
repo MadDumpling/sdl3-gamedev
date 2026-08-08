@@ -11,6 +11,8 @@ class FallingEvent;
 class JumpEvent;
 class ShootBeginEvent;
 class ShootEndEvent;
+class DashEvent;
+class ParryEvent;
 
 class PlayerControlSystem : public System<FrameStage::Gameplay, InputComponent, PlayerControllerComponent, PhysicsComponent>
 {
@@ -24,4 +26,6 @@ public:
 	void onEvent(NodeHandle target, const JumpEvent &event);
 	void onEvent(NodeHandle target, const ShootBeginEvent &event);
 	void onEvent(NodeHandle target, const ShootEndEvent &event);
+	void onEvent(NodeHandle target, const DashEvent &event);
+	void onEvent(NodeHandle target, const ParryEvent &event);
 };

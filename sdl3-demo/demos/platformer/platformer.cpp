@@ -19,10 +19,15 @@
 #include "systems/projectilesystem.h"
 #include "systems/damagesystem.h"
 #include "systems/enemysystem.h"
+#include "systems/hungersystem.h"
+#include "systems/survivorsystem.h"
+#include "systems/hudsystem.h"
 #include "components/playercontrollercomponent.h"
 #include "components/weaponcomponent.h"
 #include "components/healthcomponent.h"
 #include "components/enemycomponent.h"
+#include "components/hungercomponent.h"
+#include "components/survivorcomponent.h"
 
 Platformer::Platformer()
 {
@@ -44,6 +49,9 @@ bool Platformer::initialize(Services &services, SDLState &state)
 	services.compSys().registerSystem(std::make_unique<BasicCameraSystem>(services, glm::vec2(state.logW, state.logH)));
 	services.compSys().registerSystem(std::make_unique<DamageSystem>(services));
 	services.compSys().registerSystem(std::make_unique<EnemySystem>(services));
+	services.compSys().registerSystem(std::make_unique<HungerSystem>(services));
+	services.compSys().registerSystem(std::make_unique<SurvivorSystem>(services));
+	services.compSys().registerSystem(std::make_unique<HudSystem>(services));
 
 	struct LayerVisitor
 	{
@@ -161,6 +169,8 @@ bool Platformer::initialize(Services &services, SDLState &state)
 					auto &animComponent = services.compSys().addComponent<AnimationComponent>(player, res.playerAnims);
 					auto &renderComponent = services.compSys().addComponent<SpriteComponent>(player, res.texIdle, tileWidth, tileHeight);
 					services.compSys().addComponent<BasicCameraComponent>(player);
+					services.compSys().addComponent<HealthComponent>(player, 100);
+					services.compSys().addComponent<HungerComponent>(player, 120.0f);
 
 					layerObject.addChild(player);
 				}
@@ -193,6 +203,8 @@ bool Platformer::initialize(Services &services, SDLState &state)
 	};
 
 	Node &root = world.getNode(hRoot);
+	float tileWidth = static_cast<float>(res.map->tileWidth);
+	float tileHeight = static_cast<float>(res.map->tileHeight);
 
 	// add the background elements
 	NodeHandle hBgLayer = world.createNode();
@@ -233,6 +245,19 @@ bool Platformer::initialize(Services &services, SDLState &state)
 	{
 		std::visit(visitor, layer);
 	}
+
+	// Spawn a handful of rescue survivors for the demo
+	for (int i = 0; i < 3; ++i)
+	{
+		NodeHandle survivorHandle = world.createNode();
+		Node &survivor = world.getNode(survivorHandle);
+		survivor.setTag(5);
+		survivor.setPosition(glm::vec2(260.0f + i * 76.0f, 300.0f));
+		services.compSys().addComponent<SurvivorComponent>(survivor);
+		services.compSys().addComponent<SpriteComponent>(survivor, res.texIdle, tileWidth, tileHeight);
+		root.addChild(survivor);
+	}
+
 	return true;
 }
 

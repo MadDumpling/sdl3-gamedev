@@ -27,7 +27,14 @@ class PlayerControllerComponent : public Component
 	glm::vec2 velocity;
 	bool grounded;
 	bool shooting;
+	bool parrying;
+	bool dashing;
+	bool dashReady;
 	Timer slideTimer;
+	Timer parryTimer;
+	Timer dashTimer;
+	Timer dashCooldownTimer;
+	glm::vec2 dashDirection;
 
 	PState currentState;
 	int idleAnimationIndex;
@@ -83,4 +90,18 @@ public:
 	void setRunShootAnimation(int index) { runShootAnimationIndex = index; }
 	SDL_Texture *getRunShootTexture() const { return runShootTexture; }
 	void setRunShootTexture(SDL_Texture *tex) { this->runShootTexture = tex; }
+
+	bool isParrying() const { return parrying; }
+	void setParrying(bool parrying) { this->parrying = parrying; }
+
+	bool isDashing() const { return dashing; }
+	bool canDash() const { return dashReady; }
+	void setDashing(bool dashing) { this->dashing = dashing; }
+	void setDashReady(bool dashReady) { this->dashReady = dashReady; }
+	const glm::vec2 &getDashDirection() const { return dashDirection; }
+	void startDash(const glm::vec2 &direction);
+	void startParry();
+	Timer &getParryTimer() { return parryTimer; }
+	Timer &getDashTimer() { return dashTimer; }
+	Timer &getDashCooldownTimer() { return dashCooldownTimer; }
 };
